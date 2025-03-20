@@ -116,7 +116,15 @@ Below are a few key screenshots demonstrating the process:
 | **Screenshot 3** | MFA Enforcement. |
 | **Screenshot 4** | Sign-in logs showing success with MFA, Expired Password, IP address, and user details. |
 
-All images are located in the [`/images`](./images/) folder of this repo.
+All images are located in this repo.
+
+<div style="display: flex; flex-direction: row;">
+  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/5f8f6a8d8f901d9b7909e121db44d0b085db84b3/EntraID_groups.png" alt="project" width="350" height="250">
+  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/5f8f6a8d8f901d9b7909e121db44d0b085db84b3/EntraID_RG_DemoBank.png" width="350" height="250">
+  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/5f8f6a8d8f901d9b7909e121db44d0b085db84b3/EntraID_MFA.png" width="350" height="200">
+  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/5f8f6a8d8f901d9b7909e121db44d0b085db84b3/EntraID_audit.png" width="350" height="250">
+
+</div>
 
 ---
 
