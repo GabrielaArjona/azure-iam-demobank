@@ -13,7 +13,7 @@
 6. [Testing & Validation](#testing--validation)
 7. [Challenges & Lessons](#challenges--lessons)
 8. [Screenshots](#screenshots)
-9. [Conclusion & Next Step](#conclusion--next-step)
+9. [Conclusion & Next Step](#conclusion--nextstep)
 
 ---
 
@@ -109,16 +109,16 @@ Below are a few key screenshots demonstrating the process:
 |------------|---------|
 | Groups & members | Post‑Terraform groups in Entra ID |
 | PIM settings | 1‑hour activation, MFA required |
-| Role activation | Annie activating Security Admin |
+| Role desactivation | Annie desactivating Security Admin |
 | PIM audit log | Activation recorded with justification |
 
 All images are located in this repo.
 
 <div style="display: flex; flex-direction: row;">
-  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/5f8f6a8d8f901d9b7909e121db44d0b085db84b3/EntraID_groups.png" alt="project" width="350" height="250">
-  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/5f8f6a8d8f901d9b7909e121db44d0b085db84b3/EntraID_RG_DemoBank.png" width="350" height="250">
-  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/5f8f6a8d8f901d9b7909e121db44d0b085db84b3/EntraID_MFA.png" width="350" height="200">
-  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/5f8f6a8d8f901d9b7909e121db44d0b085db84b3/EntraID_audit.png" width="350" height="250">
+  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/dfe3736fb2b4071c6f4e2fe1a5beb55f9028de3f/groups_post_terraform.png" alt="project" width="350" height="250">
+  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/dfe3736fb2b4071c6f4e2fe1a5beb55f9028de3f/PIM_settings.png" width="350" height="250">
+  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/dfe3736fb2b4071c6f4e2fe1a5beb55f9028de3f/PIM_activation.png" width="350" height="200">
+  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/dfe3736fb2b4071c6f4e2fe1a5beb55f9028de3f/Annie_audit.png" width="350" height="250">
 
 </div>
 
