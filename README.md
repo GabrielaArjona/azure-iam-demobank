@@ -1,120 +1,116 @@
 # Microsoft Entra ID (Azure AD) IAM Implementation: DemoBank
-
-**Project Context**  
-DemoBank is a growing FinTech company that needs an IAM (Identity and Access Management) solution to streamline user access, reduce unnecessary privileges, and improve security. **Entra ID** was chosen to handle user identities, roles, and MFA.
+---
 
 ## Table of Contents
 1. [Overview](#overview)
-2. [Objectives](#objectives)
-3. [Architecture & Services Used](#architecture--services-used)
-4. [Implementation Steps](#implementation-steps)
-   - [A. Create Entra ID Groups](#a-create-entra-id-groups)
-   - [B. Create and Add Users](#b-create-and-add-users)
-   - [C. Create Resource Group](#c-create-resource-group)
-   - [D. RBAC Role Assignments](#d-rbac-role-assignments)
-   - [E. Configure MFA](#e-configure-mfa)
-   - [F. Basic Audit & Reporting](#f-basic-audit--reporting)
-5. [Testing](#testing)
-6. [Challenges & Lessons Learned](#challenges--lessons-learned)
-7. [Screenshots](#screenshots)
-8. [Conclusion](#conclusion)
+2. [Key Objectives](#key-objectives)
+3. [Architecture & Services](#architecture--services)
+4. [Implementation](#implementation)
+   - [Phase 1 – RBAC + MFA (Basics)](#phase-1—rbac--mfa-basics)
+   - [Phase 2 – Terraform IaC](#phase-2—terraform-iac)
+   - [Phase 3 – Privileged Identity Management (PIM)](#phase-3—privileged-identity-management-pim)
+5. [User / Group Matrix](#user--group-matrix)
+6. [Testing & Validation](#testing--validation)
+7. [Challenges & Lessons](#challenges--lessons)
+8. [Screenshots](#screenshots)
+9. [Conclusion & Next Step](#conclusion--next-step)
 
 ---
 
 ## Overview
-DemoBank had issues with users retaining access after role changes and a lack of MFA. By implementing Azure AD and enforcing an RBAC model, we reduced security risks and streamlined identity management.
+DemoBank (fictional FinTech) needed to:  
+* eliminate always‑on admin rights,  
+* enforce MFA,  
+* and automate IAM changes as code.  
+
+A new tenant was spun up with an **Azure AD Premium P2 trial** to unlock **Privileged Identity Management (PIM)**.  
+Terraform drives repeatable user & group creation; PIM supplies just‑in‑time (JIT) admin access.
 
 ---
 
-## Objectives
-1. Set up **Microsoft Entra ID (Azure AD)** with appropriate **groups** and **users**.  
-2. Implement **RBAC** at the resource group level.  
-3. Enforce **MFA** for all or specific users.  
-4. Perform **basic auditing** of sign-ins and role changes.
+## Key Objectives
+| Phase | Goal | Outcome |
+|-------|------|---------|
+| 1 |Baseline groups, users, MFA & RBAC | ✅ Completed |
+| 2 |Provision users & groups via **Terraform** | ✅ Completed |
+| 3 |Enable **PIM** – JIT roles, MFA on activation, full audit trail | ✅ Completed |
 
 ---
 
-## Architecture & Services Used
-- **Microsoft Entra ID (Azure AD)**: For user and group management.  
-- **Azure Resource Group**: DemoBank resource group (`DemoBank`).  
-- **Role-Based Access Control (RBAC)**: Reader, Contributor roles assigned to different groups.  
-- **MFA**: Used default security settings and per-user MFA.  
-- **Audit logs & Sign-in logs**: For monitoring and troubleshooting.
+  ## Architecture & Services
+* **Microsoft Entra ID (Azure AD)** – directory, groups, roles  
+* **Azure AD Premium P2** – Privileged Identity Management  
+* **Terraform + azuread provider** – Infrastructure‑as‑Code  
+* **Security Defaults / per‑user MFA** – strong auth  
+* **Audit & Sign‑in logs** – evidence & troubleshooting
 
 ---
 
-## Implementation Steps
+## Implementation
 
-### A. Create Entra ID Groups
-1. In Microsoft Entra ID, go to **Groups** > **New group**.  
-2. Created groups like `DevOps Team`, `Compliance`, etc.  
-3. Stored each group’s membership logic.
+### Phase 1 — RBAC + MFA (Basics)
+1. Created five functional groups: `DataTeam`, `Operations`, `Security`, `DevOpsTeam`, `Compliance`.  
+2. Added initial users; mapped RBAC roles (Reader / Contributor) at RG‑DemoBank level.  
+3. Enforced MFA via Security Defaults & per‑user MFA.  
+4. Verified sign‑in logs & basic auditing.
 
-### B. Create and Add Users
-1. Created new Entra ID users (e.g., `alicia@...`, `mark@...`).  
-2. Assigned each user a role/title (Analyst, DevOps, etc.).  
-3. Added them to the relevant groups.
+### Phase 2 — Terraform IaC
+| Step | Highlights |
+|------|------------|
+| Install Terraform | Local PowerShell + Azure CLI token from `az login` |
+| `main.tf` | 2 new users (`Erika`, `Anthony`) • role‑assignable group (`Helpdesk`) |
+| `terraform init / apply` | Idempotent user + group provisioning |
 
-### C. Create Resource Group
-1. Under **Resource Groups**, clicked **Create**.  
-2. Named it `DemoBank`.  
-3. Chose the subscription and region.
-
-### D. RBAC Role Assignments
-1. In `DemoBank` > **Access control (IAM)** > **Add role assignment**.  
-2. Assigned **Reader** to `Compliance` group, **Contributor** to `DevOpsTeam`, etc.  
-3. Verified that users inherited the correct permissions from their group memberships.
-
-#### User-to-Role Table
-
-| **User** | **Job**                    | **Group Azure AD** | **RBAC in RG-DemoBank** |
-|----------|----------------------------|--------------------|-------------------------|
-| Alicia   | Data Analyst              | DataTeam           | Contributor             |
-| Miguel   | Branch Teller             | Operations         | Reader                  |
-| Annie    | Security Administrator    | Security           | Owner                   |
-| Mark     | Developer                 | DevOpsTeam         | Contributor             |
-| Jesus    | Compliance Manager        | Compliance         | Reader                  |
-
-
-### E. Configure MFA
-- Since Conditional Access wasn’t available in our subscription, we used:
-  - **Per-user MFA** 
-  - **Security Defaults** (which automatically enforces MFA for all users).
-- Ensured each user had to register a second factor (phone, Authenticator app).
-
-### F. Basic Audit & Reporting
-1. Opened **Entra ID** > **Sign-in logs** to see who logged in and from where.  
-2. Filtered by user (e.g., Alicia) to confirm:
-   - Password changed successfully.
-   - MFA prompt was triggered.
-   - Same IP used consistently.
+### Phase 3 — Privileged Identity Management (PIM)
+| Action | Detail |
+|--------|--------|
+| Enable PIM | Premium P2 trial activated in the new tenant |
+| Role policies | 1‑hour activation • MFA required • justification logged |
+| Eligible assignments | `Security` ➜ *Security Administrator* • `Compliance` ➜ *Compliance Administrator* |
+| JIT activation test | Annie (Security) activates role, passes MFA, gains admin rights for 60 min |
+| Audit trail | Activation events recorded in **PIM → Audit History** + AzureAD Audit Logs |
 
 ---
 
-## Testing
-1. **Login Test**: Verified that users in `DataTeam` could create resources (Contributor), while `Compliance` group members could only view them (Reader).  
-2. **MFA Enforcement**: Verified that each user was prompted to set up MFA on their next sign-in.  
-3. **Audit Logs**: Confirmed sign-in logs displayed the correct IP and showed MFA prompt status.
+## User / Group Matrix
+
+| User | Job Title | Group (Entra ID) | Role (Entra ID) | PIM Mode |
+|------|-----------|------------------|-----------------|----------|
+| Alicia | Data Analyst | DataTeam | — | — |
+| Miguel | Branch Teller | Operations | — | — |
+| Annie | Security Admin | Security | Security Administrator | **Eligible** |
+| Mark | Developer | DevOpsTeam | — | — |
+| Jesus | Compliance Mgr | Compliance | Compliance Administrator | **Eligible** |
+| Erika | Helpdesk | Helpdesk | — | — |
+| Anthony | Helpdesk | Helpdesk | — | — |
+
 
 ---
 
-## Challenges & Lessons Learned
-- **Conditional Access** requires a higher tier license or trial; we used per-user MFA instead.  
-- **Security Defaults** sometimes automatically enforces MFA. It’s simpler but less customizable.  
-- **RBAC** can be confusing at first; always verify group memberships and scopes.  
-- **Documentation** with screenshots and step-by-step notes helps track changes and makes debugging easier.
+## Testing & Validation
+1. **Terraform drift‑free**: `terraform plan` returns “No changes” after apply.  
+2. **PIM JIT**: role activation prompts MFA; auto‑expires at 60 min.  
+3. **Audit**: every activation appears in *PIM → Audit History* with requester, duration, justification.  
+4. **Least Privilege**: Non‑privileged users cannot elevate without group membership.
+
+---
+
+## Challenges & Lessons
+* **Tenant separation** – had to recreate resources in a new P2‑enabled tenant.  
+* **Cloud Shell blocked** (no sub) → switched to local PowerShell + Azure CLI.  
+* **Terraform resource names must be unique** – duplicate names trigger init errors.  
 
 ---
 
 ## Screenshots
 Below are a few key screenshots demonstrating the process:
 
-| Screenshot | Description |
-|------------|------------|
-| **Screenshot 1** | Groups created in Entra ID (e.g., `DevOpsTeam`, `Compliance`). |
-| **Screenshot 2** | Resource Group `DemoBank` details and Access Control (IAM) assignments. |
-| **Screenshot 3** | MFA Enforcement. |
-| **Screenshot 4** | Sign-in logs showing success with MFA, Expired Password, IP address, and user details. |
+| Screenshot | Caption |
+|------------|---------|
+| Groups & members | Post‑Terraform groups in Entra ID |
+| PIM settings | 1‑hour activation, MFA required |
+| Role activation | Annie activating Security Admin |
+| PIM audit log | Activation recorded with justification |
 
 All images are located in this repo.
 
@@ -128,7 +124,13 @@ All images are located in this repo.
 
 ---
 
-## Conclusion
-With **Entra ID** and a basic **RBAC + MFA** setup, DemoBank now has a more secure IAM environment. Users only get the privileges they need, and MFA greatly reduces the risk of unauthorized access. The next step could be exploring advanced conditional access or enabling Privileged Identity Management (PIM) for elevated roles.
+## Conclusion & Next Step
+DemoBank now runs on a **least‑privilege, auditable IAM model**:
+
+* **Terraform** delivers repeatable, version‑controlled identities.  
+* **PIM** removes standing admin rights, enforces MFA, and logs every elevation.  
+
+**Future work**  
+* Integrate Sentinel for SIEM alerts on PIM activations.
 
 ---
