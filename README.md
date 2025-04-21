@@ -8,12 +8,12 @@
 4. [Implementation](#implementation)
    - [Phase 1 – RBAC + MFA (Basics)](#phase-1—rbac--mfa-basics)
    - [Phase 2 – Terraform IaC](#phase-2—terraform-iac)
-   - [Phase 3 – Privileged Identity Management (PIM)](#phase-3—privileged-identity-management-pim)
+   - [Phase 3 – Privileged Identity Management (PIM) + Microsoft Sentinel Integration](#phase-3—privileged-identity-management-pim)
 5. [User / Group Matrix](#user--group-matrix)
 6. [Testing & Validation](#testing--validation)
 7. [Challenges & Lessons](#challenges--lessons)
 8. [Screenshots](#screenshots)
-9. [Conclusion & Next Step](#conclusion--nextstep)
+9. [Conclusion](#conclusion)
 
 ---
 
@@ -21,7 +21,8 @@
 DemoBank (fictional FinTech) needed to:  
 * eliminate always‑on admin rights,  
 * enforce MFA,  
-* and automate IAM changes as code.  
+* utomate user and group management using Infrastructure as Code (IaC),
+* enable real-time monitoring of privileged role activations.  
 
 A new tenant was spun up with an **Azure AD Premium P2 trial** to unlock **Privileged Identity Management (PIM)**.  
 Terraform drives repeatable user & group creation; PIM supplies just‑in‑time (JIT) admin access.
@@ -33,7 +34,7 @@ Terraform drives repeatable user & group creation; PIM supplies just‑in‑time
 |-------|------|---------|
 | 1 |Baseline groups, users, MFA & RBAC | ✅ Completed |
 | 2 |Provision users & groups via **Terraform** | ✅ Completed |
-| 3 |Enable **PIM** – JIT roles, MFA on activation, full audit trail | ✅ Completed |
+| 3 |Enable **PIM** with Sentinel monitoring – JIT roles, MFA on activation, full audit trail | ✅ Completed |
 
 ---
 
@@ -41,7 +42,8 @@ Terraform drives repeatable user & group creation; PIM supplies just‑in‑time
 * **Microsoft Entra ID (Azure AD)** – directory, groups, roles  
 * **Azure AD Premium P2** – Privileged Identity Management  
 * **Terraform + azuread provider** – Infrastructure‑as‑Code  
-* **Security Defaults / per‑user MFA** – strong auth  
+* **Microsoft Sentinel** – real-time security monitoring
+* **Security Defaults / per‑user MFA** – strong auth
 * **Audit & Sign‑in logs** – evidence & troubleshooting
 
 ---
@@ -61,10 +63,10 @@ Terraform drives repeatable user & group creation; PIM supplies just‑in‑time
 | `main.tf` | 2 new users (`Erika`, `Anthony`) • role‑assignable group (`Helpdesk`) |
 | `terraform init / apply` | Idempotent user + group provisioning |
 
-### Phase 3 — Privileged Identity Management (PIM)
+### Phase 3 — Privileged Identity Management (PIM) + Microsoft Sentinel Integration
 | Action | Detail |
 |--------|--------|
-| Enable PIM | Premium P2 trial activated in the new tenant |
+| Enable PIM | Premium P2 trial activated in the new tenant + Integrated PIM audit logs into Microsoft Sentinel for real-time monitoring |
 | Role policies | 1‑hour activation • MFA required • justification logged |
 | Eligible assignments | `Security` ➜ *Security Administrator* • `Compliance` ➜ *Compliance Administrator* |
 | JIT activation test | Annie (Security) activates role, passes MFA, gains admin rights for 60 min |
@@ -90,15 +92,17 @@ Terraform drives repeatable user & group creation; PIM supplies just‑in‑time
 ## Testing & Validation
 1. **Terraform drift‑free**: `terraform plan` returns “No changes” after apply.  
 2. **PIM JIT**: role activation prompts MFA; auto‑expires at 60 min.  
-3. **Audit**: every activation appears in *PIM → Audit History* with requester, duration, justification.  
-4. **Least Privilege**: Non‑privileged users cannot elevate without group membership.
+3. **Audit**: every activation appears in *PIM → Audit History* with requester, duration, justification.
+4. **Sentinel Integration**: Verified real-time detection and incident creation within 5 minutes of PIM activations 
+5. **Least Privilege**: Non‑privileged users cannot elevate without group membership.
 
 ---
 
 ## Challenges & Lessons
 * **Tenant separation** – had to recreate resources in a new P2‑enabled tenant.  
 * **Cloud Shell blocked** (no sub) → switched to local PowerShell + Azure CLI.  
-* **Terraform resource names must be unique** – duplicate names trigger init errors.  
+* **Terraform resource names must be unique** – duplicate names trigger init errors.
+* **Integration Complexity**: Understanding and correctly configuring Sentinel's integration with Azure AD audit logs was critical.
 
 ---
 
