@@ -113,7 +113,7 @@ Below are a few key screenshots demonstrating the process:
 |------------|---------|
 | Groups & members | Post‑Terraform groups in Entra ID |
 | PIM settings | 1‑hour activation, MFA required |
-| Role desactivation | Annie desactivating Security Admin |
+| Sentinel Incident | Incident triggered upon PIM activation |
 | PIM audit log | Activation recorded with justification |
 
 All images are located in this repo.
@@ -121,7 +121,7 @@ All images are located in this repo.
 <div style="display: flex; flex-direction: row;">
   <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/dfe3736fb2b4071c6f4e2fe1a5beb55f9028de3f/groups_post_terraform.png" alt="project" width="350" height="250">
   <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/dfe3736fb2b4071c6f4e2fe1a5beb55f9028de3f/PIM_settings.png" width="350" height="250">
-  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/dfe3736fb2b4071c6f4e2fe1a5beb55f9028de3f/PIM_activation.png" width="350" height="200">
+  <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/8cc1adee44a969381c7724c02b1f46a483408990/MicrosoftSentinel_PIM.png" width="350" height="200">
   <img  style="margin-bottom: 10px;" src="https://github.com/GabrielaArjona/azure-iam-demobank/blob/dfe3736fb2b4071c6f4e2fe1a5beb55f9028de3f/Annie_audit.png" width="350" height="250">
 
 </div>
@@ -132,9 +132,7 @@ All images are located in this repo.
 DemoBank now runs on a **least‑privilege, auditable IAM model**:
 
 * **Terraform** delivers repeatable, version‑controlled identities.  
-* **PIM** removes standing admin rights, enforces MFA, and logs every elevation.  
-
-**Future work**  
-* Integrate Sentinel for SIEM alerts on PIM activations.
+* **PIM** removes standing admin rights, enforces MFA, and logs every elevation.
+* **Microsoft Sentinel** provides real-time monitoring and alerting for privileged role activations, significantly enhancing security visibility.
 
 ---
